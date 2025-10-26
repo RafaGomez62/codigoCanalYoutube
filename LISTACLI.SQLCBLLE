@@ -1,0 +1,108 @@
+      *  Objetivo      : Comparativa pgm COBOL AS400 vs MAINFRAME
+      *  Fecha         : 25/10/2025
+      *  Autor         : RGO
+      *----------------------------------------------------------------
+       PROCESS QUOTE.
+       IDENTIFICATION DIVISION.
+      *---------------------------------------------------------------*
+       PROGRAM-ID.                COBOLCA.
+       AUTHOR.                    RGO.
+       INSTALLATION.
+       DATE-WRITTEN.              25/10/2025.
+       SECURITY.                  Comparativa pgm COBOL AS400
+                                  vs MAINFRAME.
+      *---------------------------------------------------------------*
+       ENVIRONMENT DIVISION.
+      *---------------------------------------------------------------*
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER.           IBM-AS400.
+       OBJECT-COMPUTER.           IBM-AS400.
+       SPECIAL-NAMES.             DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+      *----------------------------------------------------------------
+       DATA DIVISION.
+       FILE SECTION.
+
+      *----------------------------------------------------------------
+       WORKING-STORAGE SECTION.
+      *----------------------------------------------------------------
+
+       77 W-CANTIDAD                PIC S9(04).
+
+           exec sql
+               include sqlca
+           end-exec.
+
+      *================================================================
+
+      *----------------------------------------------------------------
+       PROCEDURE DIVISION.
+      *----------------------------------------------------------------
+
+       INICIO.
+
+           PERFORM INIC-PROCESO        THRU F-INIC-PROCESO
+
+           PERFORM PROCESO             THRU F-PROCESO
+
+           PERFORM FIN-PROCESO         THRU F-FIN-PROCESO
+           .
+       F-INICIO.
+
+      *----------------------------------------------------------------
+      * Configuraciones iniciales para el proceso
+      *----------------------------------------------------------------
+       INIC-PROCESO.
+
+      *    PERFORM CONFIG-COMMIT-SQL   THRU F-CONFIG-COMMIT-SQL
+           exec sql
+               set option commit= *none
+           end-exec
+
+           .
+       F-INIC-PROCESO.
+           EXIT.
+
+      *----------------------------------------------------------------
+      * Proceso de generación de informe ONP por Período para sucursal
+      *----------------------------------------------------------------
+       PROCESO.
+
+           exec sql
+               select count(*)
+                 into :w-cantidad
+                 from clientes
+           end-exec
+
+           IF SQLCODE NOT = ZEROES
+              DISPLAY 'ERROR EN EL SQL'
+           ELSE
+              DISPLAY 'CANTIDAD DE REGISTROS : '  W-CANTIDAD
+           END-IF
+           .
+       F-PROCESO.
+           EXIT.
+
+      *----------------------------------------------------------------
+      * Pasos de cierre necesarios y fin de proceso
+      *----------------------------------------------------------------
+       FIN-PROCESO.
+
+           GOBACK
+           .
+       F-FIN-PROCESO.
+           EXIT.
+
+      *----------------------------------------------------------------
+      * Configuración inicial del COMMIT
+      *----------------------------------------------------------------
+      *CONFIG-COMMIT-SQL.
+      *
+      *    exec sql
+      *        set option commit= *none
+      *    end-exec
+      *    .
+      *F-CONFIG-COMMIT-SQL.
+      *    EXIT.

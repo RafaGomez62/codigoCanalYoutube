@@ -1,0 +1,29 @@
+
+AS400 o iSeries o IBMi
+**********************
+
+COBOL/RPG
+SDA								Ayuda diseño de pantalla
+DB2
+Archivos fisicos y logicos
+CLP								Lenguaje de Control
+
+Christian Larsen - Ingles
+Mainframe Corner
+
+www.pub400.com
+
+
+Z/Os o Mainframe
+****************
+
+COBOL
+CICS
+DB2
+VSAM
+JCL
+
+Carlos Arabito
+Mainframe Corner
+
+emulador
