@@ -1,0 +1,7 @@
+     A                                      UNIQUE
+     A          R RCLIENTE
+     A            CLIENTEID      6S 0       COLHDG('COD.CLIENTE')
+     A            NOMBRE        40A         COLHDG('APELLIDO Y NOMBRE')
+     A            DNI           10A         COLHDG('D.N.I')
+     A            FALTA          8S 0       COLHDG('FECHA')
+     A          K CLIENTEID

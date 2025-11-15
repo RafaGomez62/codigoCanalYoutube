@@ -1,0 +1,24 @@
+     A*%%TS  SD  20251108  192231  JC1962      REL-V7R5M0  5770-WDS
+     A*%%EC
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      INDARA
+     A          R MAPCLI1
+     A*%%TS  SD  20251108  192231  JC1962      REL-V7R5M0  5770-WDS
+     A                                      CF03(03 'SALIR')
+     A                                      CF12(12 'LIMPIA')
+     A                                  3 26'SISTEMA DE CONSULTA DE CLIENTES'
+     A                                  3 56USER
+     A                                  3 68DATE
+     A                                      EDTCDE(Y)
+     A                                  5 10'ID CLIENTE______:'
+     A                                  7 10'NOMBRE__________:'
+     A                                  8 10'DNI_____________:'
+     A                                  9 10'FECHA ALTA______:'
+     A                                 17 10'PF3 -> FIN, PF12 -> LIMPIAR SCREEN'
+     A                                      DSPATR(RI)
+     A            P1CLIENTE      6Y 0B  5 29EDTCDE(Z)
+     A  27                                  DSPATR(RI)
+     A            P1NOMBRE      40A  B  7 29
+     A            P1DNI         10A  B  8 29
+     A            P1FALTA        8Y 0B  9 29EDTCDE(Z)
+     A            P1MSG         60   O 15 10DSPATR(HI)

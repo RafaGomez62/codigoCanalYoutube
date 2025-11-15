@@ -1,0 +1,99 @@
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-AS400.
+       OBJECT-COMPUTER. IBM-AS400.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+
+           SELECT MAPCLI
+            ASSIGN TO WORKSTATION-MAPCLI
+            ORGANIZATION IS TRANSACTION.
+
+       DATA DIVISION.
+
+       FILE SECTION.
+
+       FD MAPCLI LABEL RECORD IS OMITTED.
+       01 REG-V002.
+       COPY DDS-ALL-FORMAT OF MAPCLI.
+
+       WORKING-STORAGE SECTION.
+
+       01 AREA-INDICADORES.
+         COPY DDS-ALL-FORMAT-INDIC OF MAPCLI.
+
+       01 WMAPCLI1.
+         03 WP1CLIENTE  PIC S9(06).
+         03 WP1NOMBRE   PIC X(40).
+         03 WP1DNI      PIC X(10).
+         03 WP1FALTA    PIC S9(08).
+         03 WP1MSG      PIC X(60).
+
+      *---Declaramos el include para el uso de SQL.
+            EXEC SQL
+                INCLUDE SQLCA
+            END-EXEC.
+      *---
+
+       PROCEDURE DIVISION.
+
+       INICIO.
+           OPEN I-O MAPCLI.
+
+           INITIALIZE WMAPCLI1.
+           MOVE "INGRESE ID CLIENTE" TO WP1MSG.
+           MOVE B"0" TO IN27.
+       SALIDA-PAN.
+
+           PERFORM MUESTRO-PANTALLA THRU
+               FIN-MUESTRO-PANTALLA.
+
+           IF IN03 OF MAPCLI1-I-INDIC = B"1" GO FIN.
+           IF IN12 OF MAPCLI1-I-INDIC = B"1"
+              INITIALIZE WMAPCLI1
+              MOVE "INGRESE ID CLIENTE" TO WP1MSG
+              MOVE B"0" TO IN27
+              GO SALIDA-PAN
+           END-IF.
+
+           IF WP1CLIENTE = ZEROS
+               MOVE "ID NO PUEDE ESTAR VACIO" TO WP1MSG
+               MOVE B"1"                      TO IN27
+               GO SALIDA-PAN
+           ELSE
+               MOVE SPACES                    TO WP1MSG
+               MOVE B"0"                      TO IN27
+           END-IF.
+
+           PERFORM BUSCA-CLI THRU FIN-BUSCA-CLI
+               GO SALIDA-PAN
+      *
+          .
+       FIN.
+           CLOSE MAPCLI.
+           STOP RUN.
+
+      **********************
+      * Busca el cliente
+      **********************
+       BUSCA-CLI.
+      *
+           EXEC SQL
+           SELECT CLIENTEID, NOMBRE, DNI, FALTA  INTO :WP1CLIENTE,
+           :WP1NOMBRE, :WP1DNI, :WP1FALTA FROM CLIENTE  WHERE
+           CLIENTEID = :WP1CLIENTE
+           END-EXEC.
+
+           IF SQLCODE = 100
+              MOVE "CLIENTE NO ENCONTRADO" TO WP1MSG
+           END-IF.
+
+       FIN-BUSCA-CLI. EXIT.
+
+       MUESTRO-PANTALLA.
+           WRITE REG-V002 FROM WMAPCLI1 FORMAT "MAPCLI1"
+                        INDICATORS ARE MAPCLI1-O-INDIC.
+           READ  MAPCLI   INTO WMAPCLI1 FORMAT "MAPCLI1"
+                        INDICATORS ARE MAPCLI1-I-INDIC.
+       FIN-MUESTRO-PANTALLA. EXIT.
